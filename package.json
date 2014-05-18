@@ -1,0 +1,23 @@
+{
+  "name": "mlang",
+  "version": "0.0.1",
+  "description": "Write Joyent Manta Jobs in Node.js",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "bunyan": ">=0.22.3",
+    "manta": ">=1.2.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/tjfontaine/mlang.git"
+  },
+  "author": "Timothy J Fontaine <tjfontaine@gmail.com>",
+  "license": "MIT"
+}
