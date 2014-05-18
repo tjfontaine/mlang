@@ -18,14 +18,18 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-var util = require('util');
+var mlang = require('../index');
+mlang.pollute();
 
-module.exports = require('./lib/mlang');
+var job = MantaJob('test');
 
-module.exports.pollute = function() {
-  util._extend(global, require('./lib/mlang'));
-  util._extend(global, require('./lib/cli'));
-  util._extend(global, require('./lib/mfind'));
-}
+var ExampleStream = job.addPackage('./stream');
 
-module.exports.require = require('./lib/module');
+mfind('/manta/public/examples/shakespeare/')
+  .pipe(job)
+  .map(ExampleStream('king'))
+  .reduce(sort().pipe(uniq('-c')).pipe(sort()))
+  .pipe('~~/public/test.out')
+  .on('end', function(job) {
+    console.log(JSON.stringify(job, null, 2));
+  });

@@ -18,14 +18,35 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
+var Transform = require('stream').Transform;
 var util = require('util');
 
-module.exports = require('./lib/mlang');
+var lstream = require('lstream');
 
-module.exports.pollute = function() {
-  util._extend(global, require('./lib/mlang'));
-  util._extend(global, require('./lib/cli'));
-  util._extend(global, require('./lib/mfind'));
+function ExampleStream(opts) {
+  if (!(this instanceof ExampleStream))
+    return new ExampleStream(opts);
+
+  Transform.call(this, {
+    objectMode: true,
+    decodeStrings: false,
+  });
+
+  this.opts = typeof opts === 'object' ? opts : { value: opts };
+
+  this.regex = new RegExp(this.opts.value, this.opts.flags || 'i');
 }
+util.inherits(ExampleStream, Transform);
 
-module.exports.require = require('./lib/module');
+ExampleStream.prototype._transform = function(chunk, enc, done) {
+  if (this.regex.test(chunk))
+    this.push(chunk + '\n');
+  done();
+};
+
+if (process.env.MANTA_INPUT_FILE) {
+  process.stdin
+    .pipe(new lstream())
+    .pipe(ExampleStream(JSON.parse(process.argv[2])))
+    .pipe(process.stdout);
+}
