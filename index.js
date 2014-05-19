@@ -27,5 +27,3 @@ module.exports.pollute = function() {
   util._extend(global, require('./lib/cli'));
   util._extend(global, require('./lib/mfind'));
 }
-
-module.exports.require = require('./lib/module');
